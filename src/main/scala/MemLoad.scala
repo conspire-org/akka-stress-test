@@ -22,9 +22,10 @@ class MemLoad extends Actor with ActorLogging {
 
   override def preStart = {
     import context.dispatcher
-    (1 to maxLoad by step) foreach { load =>
+    log.info("Starting mem load test")
+    (1 to maxLoad by step).zipWithIndex.foreach { case (load, index) =>
       context.system.scheduler.scheduleOnce(
-        step seconds,
+        index*2 seconds,
         self,
         StartLoad(load)
       )
@@ -33,7 +34,7 @@ class MemLoad extends Actor with ActorLogging {
 
   def receive = {
     case s: StartLoad =>
-      log.info("Creating load of ${s.load} bytes...")
+      log.info(s"Creating load of ${s.load} bytes...")
       context.actorOf(Props[MemLoadWorker]) ! s
   }
 
@@ -50,7 +51,6 @@ class MemLoadWorker extends Actor with ActorLogging {
   def receive = {
     case StartLoad(load) =>
       x = Array.fill(load)(Byte.MaxValue)
-      log.info("Created load of ${s.load} bytes")
   }
 
 }

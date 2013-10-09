@@ -44,7 +44,7 @@ class Node extends Bootable {
   def getLoadActorClass(role: String): Option[Class[_ <: Actor]] = {
     if(role equals "cpu")
       Some(classOf[CpuTime])
-    else if(role equals  "mem")
+    else if(role equals "mem")
       Some(classOf[MemLoad])
     else
       None
