@@ -46,6 +46,8 @@ class Node extends Bootable {
       Some(classOf[CpuTime])
     else if(role equals "mem")
       Some(classOf[MemLoad])
+    else if(role equals "monitor")
+      Some(classOf[Monitor])
     else
       None
   }
