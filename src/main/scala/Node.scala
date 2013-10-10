@@ -13,6 +13,8 @@ import akka.cluster.ClusterEvent.MemberUp
 import akka.cluster.ClusterEvent.MemberRemoved
 import akka.cluster.ClusterEvent.UnreachableMember
 
+import scala.concurrent.duration._
+
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 
@@ -62,4 +64,6 @@ class Node extends Bootable {
   }
 
 }
+
+
 
