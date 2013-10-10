@@ -30,15 +30,24 @@ class Node extends Bootable {
 
     println("Node has " + roles.size + " roles")
 
-    roles foreach { role =>
-      getLoadActorClass(role) foreach { clazz =>
-        println("Starting cluster node with role [" + role + "]")
-        system.actorOf(
-          Props.create(clazz)
-        )
+    if(roles.contains("monitor"))
+      startWorker("monitor")
+
+    Cluster(system).registerOnMemberUp { 
+      roles.filter(_ != "monitor") foreach { role =>
+        startWorker(role)
       }
     }
 
+  }
+
+  def startWorker(role: String) = {
+    getLoadActorClass(role) foreach { clazz =>
+      println("Starting cluster node with role [" + role + "]")
+      system.actorOf(
+        Props.create(clazz).withDispatcher("my-dispatcher"), "worker"
+      )
+    }
   }
 
   def getLoadActorClass(role: String): Option[Class[_ <: Actor]] = {

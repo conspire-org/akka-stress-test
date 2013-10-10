@@ -6,13 +6,13 @@
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
-      <pattern>%date - [%level] - from %logger in %thread - %message%n%xException{5}</pattern>
+      <pattern>%date - [%level] - from %logger in %X{sourceThread} - %message%n%xException{5}</pattern>
     </encoder>
   </appender>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%date - [%level] - from %logger in %thread - %message%n%xException{5}</pattern>
+      <pattern>%date - [%level] - from %logger in %X{sourceThread} - %message%n%xException{5}</pattern>
     </encoder>
   </appender>
 
