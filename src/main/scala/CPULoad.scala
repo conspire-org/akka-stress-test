@@ -31,12 +31,7 @@ class CpuTime extends Actor with ActorLogging {
 
   override def preStart = {
     log.info("Starting CPU time test")
-    import context.dispatcher
-    context.system.scheduler.scheduleOnce(
-      1 seconds,
-      self,
-      self ! StartTime(currentTime)
-    )
+    self ! StartTime(currentTime)
   }
 
   def kickoff(next: Long) = {
@@ -66,7 +61,7 @@ class CpuTimeWorker extends Actor with ActorLogging {
 
   def receive = {
     case StartTime(time) =>
-      val x = Array.fill(1000000)(Random.nextInt)
+      val x = Array.fill(1000000)(Random.nextInt(100))
       val stopTime = Platform.currentTime + time
       log.info(s"Working for $time millis")
       while(Platform.currentTime < stopTime) {
@@ -91,77 +86,33 @@ case class TestFoo(
   i3: Int,
   sI: Seq[Int],
   mI: Map[String, Int]
-  /*
-  bar1: TestBar,
-  bar2: TestBar,
-  sBar: Seq[TestBar],
-  mBar: Map[String, TestBar]
-  */
 )
-
-object TestBar {
-
-  def random = TestBar(
-    Random.alphanumeric.take(Random.nextInt).mkString,
-    "Lorem ipsum dolor set amet",
-    Random.alphanumeric.take(100).mkString,
-    (1 to Random.nextInt(100)).map(_ => Random.alphanumeric.take(Random.nextInt).mkString).toList,
-    (1 to Random.nextInt(100)).map(_ => Random.alphanumeric.take(10).mkString -> Random.alphanumeric.take(Random.nextInt).mkString).toMap,
-    Random.nextInt,
-    Random.nextInt,
-    Random.nextInt,    
-    (1 to Random.nextInt(100)).toList,
-    (1 to Random.nextInt(100)).map(i => i.toString -> i).toMap
-  )
-
-  implicit val format = Json.format[TestBar]
-
-}
 
 object TestFoo {
 
   def random = TestFoo(
-    Random.alphanumeric.take(Random.nextInt).mkString,
     "Lorem ipsum dolor set amet",
-    Random.alphanumeric.take(100).mkString,
-    (1 to Random.nextInt(100)).map(_ => Random.alphanumeric.take(Random.nextInt).mkString).toList,
-    (1 to Random.nextInt(100)).map(_ => Random.alphanumeric.take(Random.nextInt).mkString).toList,
-    (1 to Random.nextInt(100)).map(_ => Random.alphanumeric.take(Random.nextInt).mkString).toList,
-    (1 to Random.nextInt(100)).map(_ => Random.alphanumeric.take(10).mkString -> Random.alphanumeric.take(Random.nextInt).mkString).toMap,
-    Random.nextInt,
-    Random.nextInt,
-    Random.nextInt,
-    (1 to Random.nextInt(100)).toList,
-    (1 to Random.nextInt(100)).map(i => i.toString -> i).toMap
-    //TestBar.random,
-    //TestBar.random,
-    //(1 to 10).map(_ => TestBar.random).toList,
-    //(1 to 10).map(i => i.toString -> TestBar.random).toMap
+    "Lorem ipsum dolor set amet",
+    "Lorem ipsum dolor set amet",
+    (1 to 100).map(i => i.toString).toList,
+    (1 to 100).map(i => i.toString).toList,
+    (1 to 100).map(i => i.toString).toList,
+    (1 to 100).map(i => i.toString -> "asdf").toMap,
+    100,
+    100,
+    100,
+    (1 to 100).toList,
+    (1 to 100).map(i => i.toString -> i).toMap
   )
 
-  import TestBar.format
   implicit val format = Json.format[TestFoo]
 
 }
-
-case class TestBar(
-  st1: String,
-  st2: String,
-  st3: String,
-  sSt: Seq[String],
-  mSt: Map[String, String],
-  i1: Int,
-  i2: Int,
-  i3: Int,
-  sI: Seq[Int],
-  mI: Map[String, Int]
-)
 
 class JsonWorker extends Actor with ActorLogging {
 
   import CpuTime._
   import TestFoo._
-  import TestBar._
 
   def receive = {
     case StartTime(num) =>
